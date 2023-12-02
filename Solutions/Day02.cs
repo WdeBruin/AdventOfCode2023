@@ -4,17 +4,8 @@ public class Day02 : DayBase
 {
     public override void Run()
     {
-        /*
-            12 red cubes, 13 green cubes, and 14 blue
-            Sum of ID of games that are possible
-        */
-
         var lines = ReadInput("Day02.txt");
         int answer = 0;
-
-        int redMax = 12;
-        int greenMax = 13;
-        int blueMax = 14;
 
         foreach(var line in lines)
         {
