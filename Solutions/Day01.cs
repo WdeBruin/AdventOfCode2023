@@ -1,8 +1,3 @@
-using System.Diagnostics.Contracts;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
-using Advent.Extensions;
-
 namespace Advent.Solutions;
 
 public class Day01 : DayBase
