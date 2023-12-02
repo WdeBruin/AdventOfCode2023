@@ -21,11 +21,10 @@ public class Day02 : DayBase
             int id = int.Parse(line[line.IndexOf(' ')..line.IndexOf(':')]);
             string[] sets = line.Split(':')[1].Split(';');
 
-            // int red = 0;
-            // int green = 0;
-            // int blue = 0;
-            bool invalid = false;;
-
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            
             foreach(var set in sets)
             {
                 int redI = set.IndexOf("red");
@@ -35,26 +34,21 @@ public class Day02 : DayBase
                 if (redI != -1)
                 {
                     int val = int.Parse(set[..redI].Split(' ').Last(x => !string.IsNullOrEmpty(x)));
-                    if (val > redMax && invalid == false) invalid = true;
-                    //red += int.Parse(set[..redI].Split(' ').Last(x => !string.IsNullOrEmpty(x)));
-
+                    if (val > red) red = val;
                 }
                 if (greenI != -1)
                 {
                     int val = int.Parse(set[..greenI].Split(' ').Last(x => !string.IsNullOrEmpty(x)));
-                    if (val > greenMax && invalid == false) invalid = true;
-                    //green += int.Parse(set[..greenI].Split(' ').Last(x => !string.IsNullOrEmpty(x)));
+                    if (val > green) green = val;
                 }
                 if (blueI != -1)
                 {
                     int val = int.Parse(set[..blueI].Split(' ').Last(x => !string.IsNullOrEmpty(x)));
-                    if (val > blueMax && invalid == false) invalid = true;
-                    //blue += int.Parse(set[..blueI].Split(' ').Last(x => !string.IsNullOrEmpty(x)));
+                    if (val > blue) blue = val;
                 }
             }
 
-            if (invalid == false) answer += id;
-            //if (red <= redMax && green <= greenMax && blue <= blueMax) answer += id;
+            answer += red * green * blue;
         }
 
         WriteLine($"{answer}");        
