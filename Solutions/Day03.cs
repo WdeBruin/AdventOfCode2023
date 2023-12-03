@@ -4,20 +4,16 @@ namespace Advent.Solutions;
 
 public class Day03 : DayBase
 {
-    public class Nr 
+    public class Field 
     {
-        public Nr (int y, int x, int val, int endX)
+        public Field (int y, int x)
         {
             this.y = y;
             this.x = x;
-            this.val = val;
-            this.endX = endX;
         }
         
         public int y;
         public int x;
-        public int val; 
-        public int endX;
     }
 
     public override void Run()
@@ -25,36 +21,28 @@ public class Day03 : DayBase
         var lines = ReadInput("Day03.txt");        
         int answer = 0;
 
-        char[] nrs = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        List<Nr> Numbers = new();
+        List<Field> Fields = new();
 
         for (int i = 0; i < lines.Length; i++)
         {
             for (int j = 0; j < lines.Length; j++)
             {
-                // find numbers and store there index
-                if(nrs.Any(x => x == lines[i][j]))
+                // find * store there index
+                if(lines[i][j] == '*')
                 {
-                    int nrEndI = lines[i][j..].IndexOf(lines[i][j..].FirstOrDefault(x => !nrs.Any(y => x == y)));
-                    nrEndI = nrEndI == -1 ? lines[i].Length : j + nrEndI;
-                    int val = int.Parse(lines[i][j..nrEndI]);
-                    Numbers.Add(new Nr(i, j, val, nrEndI));
-
-                    j = nrEndI; //forward
+                    Fields.Add(new Field(i, j));
                 }
             }           
         }
 
-        foreach (Nr n in Numbers)
+        foreach (Field f in Fields)
         {
-            for(int i = n.x; i < n.endX; i++)
+            List<int> numbers = lines.GetAdjacentNumbers(f.x, f.y);
+            numbers = numbers.ToList(); // can be bug if two same nrs are seperate adjacent
+
+            if(numbers.Count == 2)
             {
-                List<char> adjacent = lines.GetAdjacentChars(i, n.y);
-                if (adjacent.Any(a => !nrs.Any(n => n == a) && a != '.'))
-                {
-                    answer += n.val;
-                    break;
-                }
+                answer += numbers[0] * numbers[1];
             }
         }
 
