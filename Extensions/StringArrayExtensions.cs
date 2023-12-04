@@ -1,4 +1,6 @@
-﻿namespace Advent.Extensions;
+﻿using System.Reflection;
+
+namespace Advent.Extensions;
 
 public static class StringArrayExtensions
 {
