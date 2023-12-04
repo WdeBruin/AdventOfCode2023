@@ -72,7 +72,7 @@ public static class StringArrayExtensions
         int endX = arr[y][x..].IndexOf(arr[y][x..].FirstOrDefault(v => !nrs.Any(n => n == v)));
 
         startX = startX == -1 ? 0 : startX + 1;
-        endX = endX == -1 ? arr[y].Length - 1 : x + endX;
+        endX = endX == -1 ? arr[y].Length : x + endX;
 
         return int.Parse(string.Concat(arr[y][startX..endX]));
     }
