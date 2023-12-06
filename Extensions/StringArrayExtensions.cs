@@ -9,6 +9,11 @@ public static class StringArrayExtensions
         return arr.Select(int.Parse).ToArray();
     }
 
+    public static uint[] ToUIntArray(this string[] arr)
+    {
+        return arr.Select(uint.Parse).ToArray();
+    }
+
     public static List<int> GetAdjacentNumbers(this string[] arr, int x, int y)
     {
         List<int> result = new();
