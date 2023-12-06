@@ -32,21 +32,29 @@ public class Day05 : DayBase
         var tempHumMap = GetMapArrays(tempHumHeaderI + 1, humLocHeaderI - 2, lines);
         var humLocMap = GetMapArrays(humLocHeaderI + 1, lines.Count - 1, lines);
 
-        var s = new Stopwatch();
-        s.Start();
-        
+        Console.WriteLine($"seedSoilMap {seedSoilMap.GetLength(0)}");
+        Console.WriteLine($"soilFertMap {soilFertMap.GetLength(0)}");
+        Console.WriteLine($"fertWaterMap {fertWaterMap.GetLength(0)}");
+        Console.WriteLine($"waterLightMap {waterLightMap.GetLength(0)}");
+        Console.WriteLine($"lightTempMap {lightTempMap.GetLength(0)}");
+        Console.WriteLine($"tempHumMap {tempHumMap.GetLength(0)}");
+        Console.WriteLine($"humLocMap {humLocMap.GetLength(0)}");
+
+        var st = new Stopwatch();
+        st.Start();
+
         for (int i = 0; i < seeds.Count; i += 2)
         {
             uint s0 = seeds[i];
             uint s1 = seeds[i + 1];
 
-            Console.WriteLine($"Seed: {s0} - {s0+s1}");
+            Console.WriteLine($"Seed: {s0} - {s0 + s1}");
 
             Parallel.For(0, s1, j =>
             {
                 uint s = (uint)(s0 + j);
-                //Console.WriteLine($"Seed: {s}");
-
+            // for(uint s = s0; s < s0+s1; s++)
+            // {
                 var seedSoil = Mapping(seedSoilMap, s);
                 var soilFert = Mapping(soilFertMap, seedSoil);
                 var fertWater = Mapping(fertWaterMap, soilFert);
@@ -55,16 +63,17 @@ public class Day05 : DayBase
                 var tempHum = Mapping(tempHumMap, lightTemp);
                 var humLoc = Mapping(humLocMap, tempHum);
 
-                if (humLoc < answer) 
+                if (humLoc < answer)
                 {
+                    Console.WriteLine($"New low: {humLoc} for seed {s}");
                     answer = humLoc;
-                    System.Console.WriteLine($"new lowest: {answer}");
-                }
+                }  
+            // }
             });
         }
 
         WriteLine($"{answer}");
-        Console.WriteLine($"Time it took: {s.Elapsed}");
+        Console.WriteLine($"Time it took: {st.Elapsed}");
     }
 
     private uint[,] GetMapArrays(int startLineI, int endLineI, List<string> lines)
@@ -84,7 +93,8 @@ public class Day05 : DayBase
 
     private uint Mapping(uint[,] map, uint val)
     {
-        uint res = val;
+        bool result = false;    
+        uint res = val; 
 
         for (int i = 0; i < map.GetLength(0); i++)
         {
@@ -92,10 +102,28 @@ public class Day05 : DayBase
             //[i,1] sourceStart
             //[i,2] rangeLength
 
-            if (val >= map[i, 1] && val <= map[i, 1] + map[i, 2])
+            // Loopres 0: {0, 751566052, 77735382} val 751566052 
+            // val 7
+            // res = 3 + (7 - 5) = 5            
+
+            if (val >= map[i, 1] && val < map[i, 1] + map[i, 2])
             {
-                res = map[i, 0] + val - map[i, 1];
-                break;
+                uint loopRes = map[i, 0] + (val - map[i, 1]);
+
+                if(loopRes == 39477886)
+                {
+                    Console.WriteLine($"Loopres 39477886: {map[i,0]} {map[i,1]} {map[i,2]} {val} ");
+                }
+
+                if (result == true)
+                {
+                    res = loopRes < res ? loopRes : res;                    
+                }                
+                else 
+                {
+                    result = true;
+                    res = loopRes;
+                }
             }
         }
 
