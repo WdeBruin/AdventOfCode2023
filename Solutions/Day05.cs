@@ -13,9 +13,9 @@ public class Day05 : DayBase
     public override void Run()
     {
         var lines = ReadInput("Day05.txt").ToList();
-        uint answer = uint.MaxValue;
+        long answer = long.MaxValue;
 
-        List<uint> seeds = lines[0].Split(':')[1].Split(' ').ToList().Where(x => x != "").ToArray().ToUIntArray().ToList();
+        List<long> seeds = lines[0].Split(':')[1].Split(' ').ToList().Where(x => x != "").ToArray().ToLongArray().ToList();
         var seedSoilHeaderI = lines.FindIndex(x => x.Contains("seed-to-soil"));
         var soilFertHeaderI = lines.FindIndex(x => x.Contains("soil-to-fertilizer"));
         var fertWaterHeaderI = lines.FindIndex(x => x.Contains("fertilizer-to-water"));
@@ -45,15 +45,15 @@ public class Day05 : DayBase
 
         for (int i = 0; i < seeds.Count; i += 2)
         {
-            uint s0 = seeds[i];
-            uint s1 = seeds[i + 1];
+            long s0 = seeds[i];
+            long s1 = seeds[i + 1];
 
             Console.WriteLine($"Seed: {s0} - {s0 + s1}");
 
             Parallel.For(0, s1, j =>
             {
-                uint s = (uint)(s0 + j);
-            // for(uint s = s0; s < s0+s1; s++)
+                long s = (long)(s0 + j);
+            // for(long s = s0; s < s0+s1; s++)
             // {
                 var seedSoil = Mapping(seedSoilMap, s);
                 var soilFert = Mapping(soilFertMap, seedSoil);
@@ -76,13 +76,13 @@ public class Day05 : DayBase
         Console.WriteLine($"Time it took: {st.Elapsed}");
     }
 
-    private uint[,] GetMapArrays(int startLineI, int endLineI, List<string> lines)
+    private long[,] GetMapArrays(int startLineI, int endLineI, List<string> lines)
     {
-        var res = new uint[endLineI - startLineI + 1, 3];
+        var res = new long[endLineI - startLineI + 1, 3];
 
         for (int i = startLineI; i <= endLineI; i++)
         {
-            var parts = lines[i].Split(' ').ToUIntArray();
+            var parts = lines[i].Split(' ').ToLongArray();
             res[i - startLineI, 0] = parts[0];
             res[i - startLineI, 1] = parts[1];
             res[i - startLineI, 2] = parts[2];
@@ -91,39 +91,21 @@ public class Day05 : DayBase
         return res;
     }
 
-    private uint Mapping(uint[,] map, uint val)
+    private long Mapping(long[,] map, long val)
     {
         bool result = false;    
-        uint res = val; 
+        long res = val; 
 
         for (int i = 0; i < map.GetLength(0); i++)
         {
             //[i,0] destStart 
             //[i,1] sourceStart
-            //[i,2] rangeLength
-
-            // Loopres 0: {0, 751566052, 77735382} val 751566052 
-            // val 7
-            // res = 3 + (7 - 5) = 5            
-
-            if (val >= map[i, 1] && val < map[i, 1] + map[i, 2])
+            //[i,2] rangeLength       
+                        
+            if (val >= map[i, 1] && val <= map[i, 1] + map[i, 2])
             {
-                uint loopRes = map[i, 0] + (val - map[i, 1]);
-
-                if(loopRes == 39477886)
-                {
-                    Console.WriteLine($"Loopres 39477886: {map[i,0]} {map[i,1]} {map[i,2]} {val} ");
-                }
-
-                if (result == true)
-                {
-                    res = loopRes < res ? loopRes : res;                    
-                }                
-                else 
-                {
-                    result = true;
-                    res = loopRes;
-                }
+                res = map[i, 0] + val - map[i, 1];
+                break;
             }
         }
 
