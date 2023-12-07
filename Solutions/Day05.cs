@@ -93,7 +93,6 @@ public class Day05 : DayBase
 
     private long Mapping(long[,] map, long val)
     {
-        bool result = false;    
         long res = val; 
 
         for (int i = 0; i < map.GetLength(0); i++)
