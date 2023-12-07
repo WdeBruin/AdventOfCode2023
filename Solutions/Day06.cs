@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using Advent.Extensions;
 using static Advent.Extensions.StringArrayExtensions;
@@ -15,33 +16,22 @@ public class Day06 : DayBase
     {
         var lines = ReadInput("Day06.txt");
 
-        var times = lines[0].Split(':')[1].Split(' ').ToList().Where(x => x != "").ToArray().ToIntArray();
-        var targets = lines[1].Split(':')[1].Split(' ').ToList().Where(x => x != "").ToArray().ToIntArray();
+        var time = long.Parse(string.Concat(lines[0].Split(':')[1].Where(c => !char.IsWhiteSpace(c))));
+        var target = long.Parse(string.Concat(lines[1].Split(':')[1].Where(c => !char.IsWhiteSpace(c))));
 
-        List<int> answers = new();
+        Console.WriteLine($"Time: {time} -- Target: {target}");
 
-        Parallel.For(0, times.Length, i => {
-            int time = times[i];
-            int target = targets[i];
+        int answer = 0;
 
-            int answerCount = 0;
+        for (long i = 0; i < time; i++)
+        {
+            long speed = i;
+            long runTime = time - i;
+            double dist = (double)runTime * speed;
 
-            for(int j = 1; j < time; j++)
-            {
-                int speed = j;
-                int runTime = time - j;
-                double dist = (double)runTime * speed;
-
-                if (dist > target)
-                    answerCount++;
-            }
-
-            answers.Add(answerCount);
-        });
-        
-        int answer = 1;
-        for(int i = 0; i < answers.Count; i++)
-            answer *= answers[i];
+            if (dist > target)
+                answer++;
+        }
 
         WriteLine($"{answer}");
     }
