@@ -69,14 +69,24 @@ public class Day07 : DayBase
             }
         }
 
-        hands = hands.OrderBy(x => x.Tier).ToList();
+        hands = hands.OrderBy(x => x.Tier)
+        .ThenBy(x => Array.IndexOf(values, x.Cards[0]))
+        .ThenBy(x => Array.IndexOf(values, x.Cards[1]))
+        .ThenBy(x => Array.IndexOf(values, x.Cards[2]))
+        .ThenBy(x => Array.IndexOf(values, x.Cards[3]))
+        .ThenBy(x => Array.IndexOf(values, x.Cards[4]))
+        .ToList();
         
-        foreach (var hand in hands)
+        int winnings = 0;
+
+        for(int i = 0; i < hands.Count; i++)
         {
-            Console.WriteLine($"Tier {hand.Tier}: {hand.Cards}");
+            hands[i].Rank = hands.Count - i;
+            Console.WriteLine($"Tier {hands[i].Tier}: {hands[i].Cards} Rank {hands[i].Rank}");
+
+            winnings += hands[i].Rank * hands[i].Bid;
         }
 
-        int answer = 0;
-        WriteLine($"{answer}");
+        WriteLine($"Winning total: {winnings}");
     }
 }
