@@ -20,7 +20,7 @@ public class Day07 : DayBase
     {
         var lines = ReadInput("Day07.txt");
 
-        char[] values = { 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2' };
+        char[] values = { 'A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J' };
 
         List<Hand> hands = new();
         foreach (var line in lines)
@@ -32,40 +32,90 @@ public class Day07 : DayBase
         foreach (var hand in hands)
         {
             var groups = hand.Cards.GroupBy(x => x).ToList();
+            int jcount = groups.Where(x => x.First() == 'J').Any() ? groups.First(x => x.First() == 'J').Count() : 0;
 
-            if (groups.Count() == 1)
+            if (jcount > 0)
             {
-                hand.Tier = 0;
-            }
-            else if (groups.Count() == 2)
-            {
-                if (groups[0].Count() == 4 || groups[1].Count() == 4)
+                if (groups.Count() == 1 || groups.Count() == 2)
                 {
-                    hand.Tier = 1;
+                    hand.Tier = 0;
                 }
-                else if ((groups[0].Count() == 3 && groups[1].Count() == 2) || (groups[1].Count() == 3 && groups[0].Count() == 2))
+                else if (groups.Count() == 3)
                 {
-                    hand.Tier = 2;
+                    var nonJ = groups.Where(g => g.First() != 'J').ToList();
+
+                    if (nonJ.Any(x => x.Count() == 4 - jcount))
+                    {
+                        hand.Tier = 1;
+                    }
+                    else if ((nonJ[0].Count() == 3 - jcount && nonJ[1].Count() == 2) || (nonJ[1].Count() == 3 - jcount && nonJ[0].Count() == 2)
+                    || (nonJ[0].Count() == 3 && nonJ[1].Count() == 2 - jcount) || (nonJ[1].Count() == 3 && nonJ[0].Count() == 2 - jcount))
+                    {
+                        hand.Tier = 2;
+                    }
+                    else
+                    {
+                        hand.Tier = 3;
+                    }
+                }
+                else if (groups.Count() == 4)
+                {
+                    var nonJ = groups.Where(g => g.First() != 'J').ToList();
+
+                    if (nonJ.Any(x => x.Count() == 4 - jcount))
+                    {
+                        hand.Tier = 1;
+                    }
+                    else if (nonJ.Any(x => x.Count() == 3 - jcount) && nonJ.Where(x => x.Count() == 2).Count() == 1 && jcount == 2)
+                    {
+                        hand.Tier = 2;
+                    }
+                    else
+                    {
+                        hand.Tier = 3;
+                    }
+                }
+                else
+                {
+                    hand.Tier = 5;
                 }
             }
-            else if (groups.Count() == 3)
+            else
             {
-                if (groups.Any(g => g.Count() == 3))
+                if (groups.Count() == 1)
                 {
-                    hand.Tier = 3;
+                    hand.Tier = 0;
                 }
-                else if (groups.Where(g => g.Count() == 2).Count() == 2)
+                else if (groups.Count() == 2)
                 {
-                    hand.Tier = 4;
+                    if (groups[0].Count() == 4 || groups[1].Count() == 4)
+                    {
+                        hand.Tier = 1;
+                    }
+                    else if ((groups[0].Count() == 3 && groups[1].Count() == 2) || (groups[1].Count() == 3 && groups[0].Count() == 2))
+                    {
+                        hand.Tier = 2;
+                    }
                 }
-            }
-            else if (groups.Count() == 4)
-            {
-                hand.Tier = 5;
-            }
-            else 
-            {
-                hand.Tier = 6;
+                else if (groups.Count() == 3)
+                {
+                    if (groups.Any(g => g.Count() == 3))
+                    {
+                        hand.Tier = 3;
+                    }
+                    else if (groups.Where(g => g.Count() == 2).Count() == 2)
+                    {
+                        hand.Tier = 4;
+                    }
+                }
+                else if (groups.Count() == 4)
+                {
+                    hand.Tier = 5;
+                }
+                else
+                {
+                    hand.Tier = 6;
+                }
             }
         }
 
@@ -76,13 +126,17 @@ public class Day07 : DayBase
         .ThenBy(x => Array.IndexOf(values, x.Cards[3]))
         .ThenBy(x => Array.IndexOf(values, x.Cards[4]))
         .ToList();
-        
+
         int winnings = 0;
 
-        for(int i = 0; i < hands.Count; i++)
+        for (int i = 0; i < hands.Count; i++)
         {
             hands[i].Rank = hands.Count - i;
-            Console.WriteLine($"Tier {hands[i].Tier}: {hands[i].Cards} Rank {hands[i].Rank}");
+
+            // if (hands[i].Cards.Any(x => x == 'J'))
+            // {
+                Console.WriteLine($"Tier {hands[i].Tier}: {hands[i].Cards} Rank {hands[i].Rank}");
+            // }
 
             winnings += hands[i].Rank * hands[i].Bid;
         }
