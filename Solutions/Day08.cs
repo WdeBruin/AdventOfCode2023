@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Advent.Common;
 
 namespace Advent.Solutions;
@@ -9,36 +10,34 @@ public class Day08 : DayBase
         var lines = ReadInput("Day08.txt");
         string instructions = lines[0];
 
-        BinaryTree<string> binaryTree = new();
+        var allLines = lines[2..];
 
-        var line = lines[2..].First(x => x[0..3] == "AAA");
 
-        string location = line[0..3];
-        var left = line[7..10];
-        var right = line[12..15];
-        binaryTree.Add(location);
-        Node<string> currentNode = binaryTree.Root;
-        currentNode.Add(left);
-        currentNode.Add(right);
+        var startPoints = lines[2..].Where(l => l[2] == 'A').Select(y => y[0..3]).ToArray();
+        var bsts = new List<BinarySearchTree<string>>();
+
+        var time = new Stopwatch();
+        time.Start();
+        foreach (var startPoint in startPoints)
+        {
+            BinarySearchTree<string> binaryTree = new();
+            binaryTree.Insert(startPoint);
+            binaryTree.Traverse((n) =>
+            {
+                var l = lines[2..].First(x => x[0..3] == n.Value);
+                string[] s = {l[7..10], l[12..15]};
+                binaryTree.Insert(s);
+            }, TraversalType.InOrder);
+
+            bsts.Add(binaryTree);
+        }
+        Console.WriteLine($"Time passed: {time.Elapsed}");
 
         int i = 0;
         int steps = 0;
-        
-        while (currentNode.Value != "ZZZ")
-        {
-            char dir = instructions[i]; // L or R
-            currentNode = dir == 'L' ? currentNode.Left : currentNode.Right;
 
-            if (currentNode.Left == null)
-            {
-                line = lines[2..].First(x => x[0..3] == currentNode.Value);
-                currentNode.Add(line[7..10]);
-                currentNode.Add(line[12..15]);
-            }
-
-            i = i < instructions.Length - 1 ? i + 1 : 0;
-            steps++;
-        }
+        // for 8b: Must setup the full tree
+        // Then after I got full tree, do binary search.        
 
         Console.WriteLine($"Steps: {steps}");
     }
