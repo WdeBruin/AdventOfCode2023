@@ -12,6 +12,8 @@ public class Day08 : DayBase
         var startLines = lines[2..].Where(x => x[2] == 'A').Order().ToArray();
         var endLines = lines[2..].Where(x => x[2] == 'Z').Order().ToArray();
 
+        int[] results = new int[startLines.Length];
+
         for (int i = 0; i < startLines.Length; i++)
         {
             BinaryTree<string> binaryTree = new();
@@ -43,6 +45,12 @@ public class Day08 : DayBase
                 steps++;
             }
             Console.WriteLine($"Steps: {steps}");
+            results[i] = steps;
         }
+
+        var lcm = new LCMCalculator();
+        var r = lcm.CalculateLCM(results);
+
+        Console.WriteLine($"ChatGPT LCM: {r}");
     }
 }
