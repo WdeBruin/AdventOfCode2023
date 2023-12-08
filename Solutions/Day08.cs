@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Advent.Common;
 
 namespace Advent.Solutions;
@@ -10,35 +9,40 @@ public class Day08 : DayBase
         var lines = ReadInput("Day08.txt");
         string instructions = lines[0];
 
-        var allLines = lines[2..];
+        var startLines = lines[2..].Where(x => x[2] == 'A').Order().ToArray();
+        var endLines = lines[2..].Where(x => x[2] == 'Z').Order().ToArray();
 
-
-        var startPoints = lines[2..].Where(l => l[2] == 'A').Select(y => y[0..3]).ToArray();
-        var bsts = new List<BinarySearchTree<string>>();
-
-        var time = new Stopwatch();
-        time.Start();
-        foreach (var startPoint in startPoints)
+        for (int i = 0; i < startLines.Length; i++)
         {
-            BinarySearchTree<string> binaryTree = new();
-            binaryTree.Insert(startPoint);
-            binaryTree.Traverse((n) =>
+            BinaryTree<string> binaryTree = new();
+
+            string location = startLines[i][0..3];
+            var left = startLines[i][7..10];
+            var right = startLines[i][12..15];
+            binaryTree.Add(location);
+            Node<string> currentNode = binaryTree.Root;
+            currentNode.Add(left);
+            currentNode.Add(right);
+
+            int ins = 0;
+            int steps = 0;
+
+            while (currentNode.Value[2] != 'Z')
             {
-                var l = lines[2..].First(x => x[0..3] == n.Value);
-                string[] s = {l[7..10], l[12..15]};
-                binaryTree.Insert(s);
-            }, TraversalType.InOrder);
+                char dir = instructions[ins]; // L or R
+                currentNode = dir == 'L' ? currentNode.Left : currentNode.Right;
 
-            bsts.Add(binaryTree);
+                if (currentNode.Left == null)
+                {
+                    var line = lines[2..].First(x => x[0..3] == currentNode.Value);
+                    currentNode.Add(line[7..10]);
+                    currentNode.Add(line[12..15]);
+                }
+
+                ins = ins < instructions.Length - 1 ? ins + 1 : 0;
+                steps++;
+            }
+            Console.WriteLine($"Steps: {steps}");
         }
-        Console.WriteLine($"Time passed: {time.Elapsed}");
-
-        int i = 0;
-        int steps = 0;
-
-        // for 8b: Must setup the full tree
-        // Then after I got full tree, do binary search.        
-
-        Console.WriteLine($"Steps: {steps}");
     }
 }
