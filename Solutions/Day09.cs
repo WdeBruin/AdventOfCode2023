@@ -19,26 +19,26 @@ public class Day09 : DayBase
             }
 
             // Extrapolate the next value based on the extrapolated differences
-            int firstValue = sequence[0];
-            int extrapolatedPrevValue = ExtrapolatePrevValue(firstValue, differencesList);
+            int lastValue = sequence[sequence.Length - 1];
+            int extrapolatedNextValue = ExtrapolateNextValue(lastValue, differencesList);
 
-            return extrapolatedPrevValue;
+            return extrapolatedNextValue;
         }
 
-        private int ExtrapolatePrevValue(int firstValue, List<List<int>> differencesList)
+        private int ExtrapolateNextValue(int lastValue, List<List<int>> differencesList)
         {
-            int prevValue = firstValue;
+            int nextValue = lastValue;
 
-            differencesList.Last().Insert(0, 0);
+            differencesList.Last().Add(0);
 
             for (int j = differencesList.Count - 2; j >= 0; j--)
             {
-                differencesList[j].Insert(0, differencesList[j].First() - differencesList[j+1].First());
+                differencesList[j].Add(differencesList[j].Last() + differencesList[j + 1].Last());
             }
 
-            prevValue -= differencesList[0].First();
+            nextValue += differencesList[0].Last();
 
-            return prevValue;
+            return nextValue;
         }
 
         private List<int> ExtrapolateDifferences(List<int> differences)
@@ -91,7 +91,7 @@ public class Day09 : DayBase
             int[] sequence = line.Split(' ').ToArray().ToIntArray();
             int next = analyzer.AnalyzeAndExtrapolate(sequence);
             Console.WriteLine($"Original sequence: {string.Join(", ", sequence)}");
-            Console.WriteLine($"Extrapolated prev value: {next}");
+            Console.WriteLine($"Extrapolated next value: {next}");
             Console.WriteLine();
             total += next;
         }
