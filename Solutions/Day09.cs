@@ -89,6 +89,7 @@ public class Day09 : DayBase
         foreach (var line in lines)
         {
             int[] sequence = line.Split(' ').ToArray().ToIntArray();
+            sequence = sequence.Reverse().ToArray();
             int next = analyzer.AnalyzeAndExtrapolate(sequence);
             Console.WriteLine($"Original sequence: {string.Join(", ", sequence)}");
             Console.WriteLine($"Extrapolated next value: {next}");
