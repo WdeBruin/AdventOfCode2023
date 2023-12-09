@@ -1,3 +1,5 @@
+using Advent.Extensions;
+
 namespace Advent.Solutions;
 
 public class Day09 : DayBase
@@ -5,9 +7,9 @@ public class Day09 : DayBase
 
     public class SequenceAnalyzer
     {
-        public void AnalyzeAndExtrapolate(int[] sequence)
+        public int AnalyzeAndExtrapolate(int[] sequence)
         {
-            List<List<int>> differencesList = new ();
+            List<List<int>> differencesList = new();
             differencesList.Add(ComputeDifferences(sequence));
 
             // Extrapolate differences until the last item is all zeros
@@ -20,9 +22,7 @@ public class Day09 : DayBase
             int lastValue = sequence[sequence.Length - 1];
             int extrapolatedNextValue = ExtrapolateNextValue(lastValue, differencesList);
 
-            Console.WriteLine($"Original sequence: {string.Join(", ", sequence)}");
-            Console.WriteLine($"Extrapolated next value: {extrapolatedNextValue}");
-            Console.WriteLine();
+            return extrapolatedNextValue;
         }
 
         private int ExtrapolateNextValue(int lastValue, List<List<int>> differencesList)
@@ -33,7 +33,7 @@ public class Day09 : DayBase
 
             for (int j = differencesList.Count - 2; j >= 0; j--)
             {
-                differencesList[j].Add(differencesList[j].Last() + differencesList[j+1].Last());
+                differencesList[j].Add(differencesList[j].Last() + differencesList[j + 1].Last());
             }
 
             nextValue += differencesList[0].Last();
@@ -81,20 +81,21 @@ public class Day09 : DayBase
 
     public override void Run()
     {
-        // var lines = ReadInput("Day08.txt");
-
+        var lines = ReadInput("Day09.txt");
         SequenceAnalyzer analyzer = new SequenceAnalyzer();
+        int total = 0;
 
         // Example sequences
-        int[] sequence1 = { 0, 3, 6, 9, 12, 15 };
-        int[] sequence2 = { 1, 3, 6, 10, 15, 21 };
-        int[] sequence3 = { 10, 13, 16, 21, 30, 45 };
-
-        // Extrapolate next values for each sequence
-        analyzer.AnalyzeAndExtrapolate(sequence1);
-        analyzer.AnalyzeAndExtrapolate(sequence2);
-        analyzer.AnalyzeAndExtrapolate(sequence3);
-
-        // Console.WriteLine($"ChatGPT LCM: {r}");
+        foreach (var line in lines)
+        {
+            int[] sequence = line.Split(' ').ToArray().ToIntArray();
+            int next = analyzer.AnalyzeAndExtrapolate(sequence);
+            Console.WriteLine($"Original sequence: {string.Join(", ", sequence)}");
+            Console.WriteLine($"Extrapolated next value: {next}");
+            Console.WriteLine();
+            total += next;
+        }
+        
+        Console.WriteLine($"Total value: {total}");
     }
 }
