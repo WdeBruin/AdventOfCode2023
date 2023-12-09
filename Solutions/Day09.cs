@@ -7,31 +7,36 @@ public class Day09 : DayBase
     {
         public void AnalyzeAndExtrapolate(int[] sequence)
         {
-            List<int> differences = ComputeDifferences(sequence);
+            List<List<int>> differencesList = new ();
+            differencesList.Add(ComputeDifferences(sequence));
 
             // Extrapolate differences until the last item is all zeros
-            while (!AllZeroes(differences))
+            while (!AllZeroes(differencesList.Last()))
             {
-                differences = ExtrapolateDifferences(differences);
+                differencesList.Add(ExtrapolateDifferences(differencesList.Last()));
             }
 
             // Extrapolate the next value based on the extrapolated differences
             int lastValue = sequence[sequence.Length - 1];
-            int extrapolatedNextValue = ExtrapolateNextValue(lastValue, differences);
+            int extrapolatedNextValue = ExtrapolateNextValue(lastValue, differencesList);
 
             Console.WriteLine($"Original sequence: {string.Join(", ", sequence)}");
             Console.WriteLine($"Extrapolated next value: {extrapolatedNextValue}");
             Console.WriteLine();
         }
 
-        private int ExtrapolateNextValue(int lastValue, List<int> differences)
+        private int ExtrapolateNextValue(int lastValue, List<List<int>> differencesList)
         {
             int nextValue = lastValue;
 
-            for (int i = 0; i < differences.Count; i++)
+            differencesList.Last().Add(0);
+
+            for (int j = differencesList.Count - 2; j >= 0; j--)
             {
-                nextValue += differences[i];
+                differencesList[j].Add(differencesList[j].Last() + differencesList[j+1].Last());
             }
+
+            nextValue += differencesList[0].Last();
 
             return nextValue;
         }
