@@ -1,3 +1,4 @@
+using System.Data;
 using System.Runtime.CompilerServices;
 using Advent.Extensions;
 
@@ -121,8 +122,97 @@ public class Day10 : DayBase
         }
 
         // Paths are done now. Need to find the middle point of the one that ends with S.
-        var completePath = paths.First(x => x.Last().Item3 == 'S');
-        Console.WriteLine((completePath.Count-1)/2);
+        var loopPath = paths.First(x => x.Last().Item3 == 'S');
+        Console.WriteLine((loopPath.Count - 1) / 2);
+
+        List<(int, int)> candidates = new();
+
+        foreach (var step in loopPath)
+        {
+            if (!loopPath.Any(p => p.Item1 == step.Item1 - 1  && p.Item2 == step.Item2)) // Look north
+            {
+                if (loopPath.Any(p => p.Item1 < step.Item1)) // We need at least some step to find anything enclosed
+                {
+                    int candidateY = step.Item1-1;
+                    bool stop = false;
+                    while (candidateY >= 0 && stop == false)
+                    {
+                        if (pipeMap[candidateY, step.Item2] == '.')
+                        {
+                            candidates.Add((candidateY, step.Item2));
+                        }
+                        else
+                        {
+                            stop = true;
+                        }
+                        candidateY--;
+                    }
+                }
+            }
+            if (!loopPath.Any(p => p.Item1 == step.Item1 + 1 && p.Item2 == step.Item2)) // Look south
+            {
+                if (loopPath.Any(p => p.Item1 > step.Item1)) // We need at least some step to find anything enclosed
+                {
+                    int candidateY = step.Item1+1;
+                    bool stop = false;
+                    while (candidateY < numRows && stop == false)
+                    {
+                        if (pipeMap[candidateY, step.Item2] == '.')
+                        {
+                            candidates.Add((candidateY, step.Item2));
+                        }
+                        else
+                        {
+                            stop = true;
+                        }
+                        candidateY++;
+                    }
+                }
+            }
+            if (!loopPath.Any(p =>  p.Item1 == step.Item1 && p.Item2 == step.Item2 - 1)) // Look west
+            {
+                if (loopPath.Any(p => p.Item2 < step.Item2)) // We need at least some step to find anything enclosed
+                {
+                    int candidateX = step.Item2-1;
+                    bool stop = false;
+                    while (candidateX >= 0 && stop == false)
+                    {
+                        if (pipeMap[step.Item1, candidateX] == '.')
+                        {
+                            candidates.Add((step.Item1, candidateX));
+                        }
+                        else
+                        {
+                            stop = true;
+                        }
+                        candidateX--;
+                    }
+                }
+            }
+            if (!loopPath.Any(p => p.Item1 == step.Item1 && p.Item2 == step.Item2 + 1)) // Look east
+            {
+                if (loopPath.Any(p => p.Item2 > step.Item2)) // We need at least some step to find anything enclosed
+                {
+                    int candidateX = step.Item2+1;
+                    bool stop = false;
+                    while (candidateX < numCols && stop == false)
+                    {
+                        if (pipeMap[step.Item1, candidateX] == '.')
+                        {
+                            candidates.Add((step.Item1, candidateX));
+                        }
+                        else
+                        {
+                            stop = true;
+                        }
+                        candidateX++;
+                    }
+                }
+            }
+        }
+
+        var answer = candidates.Distinct().Count();
+        Console.WriteLine(answer);
     }
 
     private void AddWest(char[,] pipeMap, List<(int, int, char)> path, (int, int, char) c)
