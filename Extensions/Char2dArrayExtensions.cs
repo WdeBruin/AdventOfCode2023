@@ -9,7 +9,7 @@ public static class CharArrayExtensions
         }
         else
         {
-            throw new IndexOutOfRangeException("Cannot get value to the north; index out of range.");
+            return '.';
         }
     }
 
@@ -21,7 +21,7 @@ public static class CharArrayExtensions
         }
         else
         {
-            throw new IndexOutOfRangeException("Cannot get value to the south; index out of range.");
+            return '.';
         }
     }
 
@@ -33,7 +33,7 @@ public static class CharArrayExtensions
         }
         else
         {
-            throw new IndexOutOfRangeException("Cannot get value to the east; index out of range.");
+            return '.';
         }
     }
 
@@ -45,7 +45,7 @@ public static class CharArrayExtensions
         }
         else
         {
-            throw new IndexOutOfRangeException("Cannot get value to the west; index out of range.");
+            return '.';
         }
     }
 }
