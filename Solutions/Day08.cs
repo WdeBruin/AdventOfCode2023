@@ -32,14 +32,18 @@ public class Day08 : DayBase
             while (currentNode.Value[2] != 'Z')
             {
                 char dir = instructions[ins]; // L or R
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 currentNode = dir == 'L' ? currentNode.Left : currentNode.Right;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 if (currentNode.Left == null)
                 {
                     var line = lines[2..].First(x => x[0..3] == currentNode.Value);
                     currentNode.Add(line[7..10]);
                     currentNode.Add(line[12..15]);
                 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                 ins = ins < instructions.Length - 1 ? ins + 1 : 0;
                 steps++;
